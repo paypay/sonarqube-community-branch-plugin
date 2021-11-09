@@ -31,6 +31,7 @@ import io.aexp.nodes.graphql.GraphQLRequestEntity;
 import io.aexp.nodes.graphql.GraphQLResponseEntity;
 import io.aexp.nodes.graphql.GraphQLTemplate;
 import io.aexp.nodes.graphql.InputObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.sonar.api.ce.posttask.QualityGate;
@@ -505,7 +506,7 @@ public class GraphqlCheckRunProviderTest {
         assertThat(annotationArgumentCaptor.getValue()).isEqualTo(expectedAnnotationObjects);
 
         verify(inputObjectBuilders.get(position + 1)).put("repositoryId", "repository ID");
-        verify(inputObjectBuilders.get(position + 1)).put("name", "projectName Sonarqube Results");
+        verify(inputObjectBuilders.get(position + 1)).put("name", "SonarQube Results");
         verify(inputObjectBuilders.get(position + 1)).put("headSha", "commit SHA");
         verify(inputObjectBuilders.get(position + 1)).put("status", RequestableCheckStatusState.COMPLETED);
         verify(inputObjectBuilders.get(position + 1)).put("conclusion", status == QualityGate.Status.OK ?

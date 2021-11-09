@@ -91,22 +91,16 @@ public class PullRequestPostAnalysisTask implements PostProjectAnalysisTask {
             LOGGER.warn("No branch name has been submitted with the Pull Request. Analysis will be skipped");
             return;
         }
-
-        ProjectAlmSettingDto projectAlmSettingDto;
+        ProjectAlmSettingDto projectAlmSettingDto = new ProjectAlmSettingDto();
         Optional<AlmSettingDto> optionalAlmSettingDto;
         try (DbSession dbSession = dbClient.openSession(false)) {
 
-            Optional<ProjectAlmSettingDto> optionalProjectAlmSettingDto =
-                    dbClient.projectAlmSettingDao().selectByProject(dbSession, projectAnalysis.getProject().getUuid());
-
-            if (!optionalProjectAlmSettingDto.isPresent()) {
-                LOGGER.debug("No ALM has been set on the current project");
-                return;
-            }
-
-            projectAlmSettingDto = optionalProjectAlmSettingDto.get();
-            String almSettingUuid = projectAlmSettingDto.getAlmSettingUuid();
-            optionalAlmSettingDto = dbClient.almSettingDao().selectByUuid(dbSession, almSettingUuid);
+            projectAlmSettingDto.setAlmRepo("Pay-Baymax/" + projectAnalysis.getProject().getKey());
+            projectAlmSettingDto.setAlmSettingUuid("AXxy3BubdvWBwkcdvIfk");
+            projectAlmSettingDto.setAlmSlug("");
+            projectAlmSettingDto.setProjectUuid(projectAnalysis.getProject().getUuid());
+            projectAlmSettingDto.setSummaryCommentEnabled(false);
+            optionalAlmSettingDto = dbClient.almSettingDao().selectByUuid(dbSession, "AXxy3BubdvWBwkcdvIfk");
 
         }
 
