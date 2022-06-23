@@ -92,6 +92,8 @@ public class PullRequestPostAnalysisTask implements PostProjectAnalysisTask {
             return;
         }
         ProjectAlmSettingDto projectAlmSettingDto = new ProjectAlmSettingDto();
+        String enablePrDecoration = Optional.ofNullable(System.getenv("PR_DECORATION_ENABLED")).orElse("false");
+        if (enablePrDecoration.equalsIgnoreCase("true")) enablePrDecoration = "true";
         Optional<AlmSettingDto> optionalAlmSettingDto;
         try (DbSession dbSession = dbClient.openSession(false)) {
             projectAlmSettingDto.setAlmRepo(projectAnalysis.getScannerContext().getProperties().getOrDefault(
@@ -99,7 +101,7 @@ public class PullRequestPostAnalysisTask implements PostProjectAnalysisTask {
             projectAlmSettingDto.setAlmSettingUuid("AXxy3BubdvWBwkcdvIfk");
             projectAlmSettingDto.setAlmSlug("");
             projectAlmSettingDto.setProjectUuid(projectAnalysis.getProject().getUuid());
-            projectAlmSettingDto.setSummaryCommentEnabled(true);
+            projectAlmSettingDto.setSummaryCommentEnabled(Boolean.parseBoolean(enablePrDecoration));
             optionalAlmSettingDto = dbClient.almSettingDao().selectByUuid(dbSession, "AXxy3BubdvWBwkcdvIfk");
 
         }
