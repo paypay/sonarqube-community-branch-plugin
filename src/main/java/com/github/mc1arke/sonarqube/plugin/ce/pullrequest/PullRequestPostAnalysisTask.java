@@ -92,6 +92,10 @@ public class PullRequestPostAnalysisTask implements PostProjectAnalysisTask {
             return;
         }
         ProjectAlmSettingDto projectAlmSettingDto = new ProjectAlmSettingDto();
+
+        String enablePrDecoration = Optional.ofNullable(System.getenv("ENABLE_PR_DECORATION"))
+                .orElse(projectAnalysis.getScannerContext().getProperties().getOrDefault("sonar.analysis.enableprdecoration", "true"));
+        LOGGER.info("sonar.analysis.enableprdecoration: {}", enablePrDecoration);
         Optional<AlmSettingDto> optionalAlmSettingDto;
         try (DbSession dbSession = dbClient.openSession(false)) {
             projectAlmSettingDto.setAlmRepo(projectAnalysis.getScannerContext().getProperties().getOrDefault(
@@ -99,7 +103,7 @@ public class PullRequestPostAnalysisTask implements PostProjectAnalysisTask {
             projectAlmSettingDto.setAlmSettingUuid("AXxy3BubdvWBwkcdvIfk");
             projectAlmSettingDto.setAlmSlug("");
             projectAlmSettingDto.setProjectUuid(projectAnalysis.getProject().getUuid());
-            projectAlmSettingDto.setSummaryCommentEnabled(false);
+            projectAlmSettingDto.setSummaryCommentEnabled(Boolean.parseBoolean(enablePrDecoration));
             optionalAlmSettingDto = dbClient.almSettingDao().selectByUuid(dbSession, "AXxy3BubdvWBwkcdvIfk");
 
         }
