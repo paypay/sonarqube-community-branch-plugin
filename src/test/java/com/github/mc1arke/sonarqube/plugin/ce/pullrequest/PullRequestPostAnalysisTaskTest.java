@@ -425,7 +425,7 @@ class PullRequestPostAnalysisTaskTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     void testFinishedAnalysisDecorationRequestPullRequestLinkNotSavedIfBranchDtoMissing() {
         doReturn(Branch.Type.PULL_REQUEST).when(branch).getType();
         doReturn(Optional.of("pull-request")).when(branch).getName();
