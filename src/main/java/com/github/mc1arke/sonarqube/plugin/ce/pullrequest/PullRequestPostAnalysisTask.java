@@ -75,6 +75,10 @@ public class PullRequestPostAnalysisTask implements PostProjectAnalysisTask {
             return;
         }
 
+        String enablePrDecoration = Optional.ofNullable(System.getenv("ENABLE_PR_DECORATION"))
+                .orElse(projectAnalysis.getScannerContext().getProperties().getOrDefault("sonar.analysis.enableprdecoration", "true"));
+        LOGGER.info("sonar.analysis.enableprdecoration: {}", enablePrDecoration);
+
         ProjectAlmSettingDto projectAlmSettingDto;
         Optional<AlmSettingDto> optionalAlmSettingDto;
         try (DbSession dbSession = dbClient.openSession(false)) {
@@ -83,11 +87,29 @@ public class PullRequestPostAnalysisTask implements PostProjectAnalysisTask {
                     dbClient.projectAlmSettingDao().selectByProject(dbSession, projectAnalysis.getProject().getUuid());
 
             if (optionalProjectAlmSettingDto.isEmpty()) {
-                LOGGER.debug("No ALM has been set on the current project");
-                return;
+                LOGGER.info("No ALM has been set on the current project; using default hardcoded PayPay values");
+
+                ProjectAlmSettingDto paypayAlmSettingsDto = new ProjectAlmSettingDto();
+                paypayAlmSettingsDto.setAlmRepo(projectAnalysis.getScannerContext().getProperties().getOrDefault(
+					    "sonar.pullrequest.github.repository", "Pay-Baymax/" + projectAnalysis.getProject().getKey()));
+                paypayAlmSettingsDto.setAlmSettingUuid("AXxy3BubdvWBwkcdvIfk");
+                paypayAlmSettingsDto.setAlmSlug("");
+                paypayAlmSettingsDto.setProjectUuid(projectAnalysis.getProject().getUuid());
+                paypayAlmSettingsDto.setSummaryCommentEnabled(Boolean.parseBoolean(enablePrDecoration));
+
+                optionalProjectAlmSettingDto = Optional.of(paypayAlmSettingsDto);
             }
 
             projectAlmSettingDto = optionalProjectAlmSettingDto.get();
+
+            LOGGER.info("FINAL ALM:" +
+                    " projectUuid=" + projectAlmSettingDto.getProjectUuid() +
+                    " almSettingsUuid=" + projectAlmSettingDto.getAlmSettingUuid() +
+                    " almRepo=" + projectAlmSettingDto.getAlmRepo() +
+                    " almSlug=" + projectAlmSettingDto.getAlmSlug() +
+                    " monorepo=" + projectAlmSettingDto.getMonorepo() +
+                    " summaryCommentEnabled=" + projectAlmSettingDto.getSummaryCommentEnabled());
+
             String almSettingUuid = projectAlmSettingDto.getAlmSettingUuid();
             optionalAlmSettingDto = dbClient.almSettingDao().selectByUuid(dbSession, almSettingUuid);
 
