@@ -78,7 +78,7 @@ To use it, clone the repository and execute `docker-compose up`. Note that you n
 When using
 [Sonarqube official Helm Chart](https://github.com/SonarSource/helm-chart-sonarqube/tree/master/charts/sonarqube),
 you need to add the following settings to your helm values, where `${version}` should be replaced with the plugin
-version (e.g. `1.11.0`). Beware of the changes made in helm chart version [6.1.0](https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/CHANGELOG.md#610):
+version (e.g. `1.12.0`). Beware of the changes made in helm chart version [6.1.0](https://github.com/SonarSource/helm-chart-sonarqube/blob/master/charts/sonarqube/CHANGELOG.md#610):
 
 ### helm chart version < 6.1.0
 
